@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalitikRouteImport } from './routes/analitik'
 import { Route as KonularRouteImport } from './routes/konular'
 import { Route as ProgramRouteImport } from './routes/program'
+import { Route as TakvimRouteImport } from './routes/takvim'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const ProgramRoute = ProgramRouteImport.update({
   path: '/program',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TakvimRoute = TakvimRouteImport.update({
+  id: '/takvim',
+  path: '/takvim',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analitik': typeof AnalitikRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
+  '/takvim': typeof TakvimRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analitik': typeof AnalitikRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
+  '/takvim': typeof TakvimRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/analitik': typeof AnalitikRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
+  '/takvim': typeof TakvimRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analitik' | '/konular' | '/program'
+  fullPaths: '/' | '/analitik' | '/konular' | '/program' | '/takvim'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analitik' | '/konular' | '/program'
-  id: '__root__' | '/' | '/analitik' | '/konular' | '/program'
+  to: '/' | '/analitik' | '/konular' | '/program' | '/takvim'
+  id: '__root__' | '/' | '/analitik' | '/konular' | '/program' | '/takvim'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   AnalitikRoute: typeof AnalitikRoute
   KonularRoute: typeof KonularRoute
   ProgramRoute: typeof ProgramRoute
+  TakvimRoute: typeof TakvimRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgramRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/takvim': {
+      id: '/takvim'
+      path: '/takvim'
+      fullPath: '/takvim'
+      preLoaderRoute: typeof TakvimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnalitikRoute: AnalitikRoute,
   KonularRoute: KonularRoute,
   ProgramRoute: ProgramRoute,
+  TakvimRoute: TakvimRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

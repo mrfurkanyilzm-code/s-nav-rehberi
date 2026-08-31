@@ -90,6 +90,43 @@ export function useTopics() {
   });
 }
 
+export function useWeeklyPlan(weekStart: string) {
+  return useQuery({
+    queryKey: ["weekly_plan_items", weekStart],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("weekly_plan_items")
+        .select("*")
+        .eq("week_start", weekStart)
+        .order("day_index", { ascending: true })
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
+export function useUpdatePlanItem(weekStart: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; is_done?: boolean; day_index?: number }) => {
+      const { id, ...patch } = input;
+      const { error } = await supabase.from("weekly_plan_items").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["weekly_plan_items", weekStart] }),
+  });
+}
+
+export function useSendCoachRequest() {
+  return useMutation({
+    mutationFn: async (input: { week_start: string; kind: string; message: string }) => {
+      const { error } = await supabase.from("coach_requests").insert(input);
+      if (error) throw error;
+    },
+  });
+}
+
 export function trTarih(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("tr-TR", {
     day: "numeric",
@@ -97,3 +134,4 @@ export function trTarih(iso: string) {
     weekday: "short",
   });
 }
+
