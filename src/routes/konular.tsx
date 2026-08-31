@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Screen, SectionTitle } from "@/components/BottomNav";
+import { useTopics } from "@/lib/data";
 
 export const Route = createFileRoute("/konular")({
   head: () => ({
@@ -19,33 +20,6 @@ export const Route = createFileRoute("/konular")({
   component: Konular,
 });
 
-const veri = [
-  {
-    ders: "Matematik",
-    konular: [
-      { ad: "Problemler", oran: 82 },
-      { ad: "Fonksiyonlar", oran: 64 },
-      { ad: "Türev", oran: 41 },
-    ],
-  },
-  {
-    ders: "Türkçe",
-    konular: [
-      { ad: "Paragraf", oran: 91 },
-      { ad: "Dil Bilgisi", oran: 73 },
-      { ad: "Sözcükte Anlam", oran: 86 },
-    ],
-  },
-  {
-    ders: "Sosyal",
-    konular: [
-      { ad: "İnkılap Tarihi", oran: 38 },
-      { ad: "Nüfus ve Yerleşme", oran: 57 },
-      { ad: "Felsefe", oran: 69 },
-    ],
-  },
-];
-
 function renk(oran: number) {
   if (oran >= 75) return "bg-success";
   if (oran >= 50) return "bg-star";
@@ -53,25 +27,35 @@ function renk(oran: number) {
 }
 
 function Konular() {
+  const { data: konular = [], isLoading } = useTopics();
+
+  const dersler = Array.from(new Set(konular.map((k) => k.subject)));
+
   return (
     <Screen title="Konu Hakimiyeti" subtitle="Kırmızı konular öncelikli tekrar listende.">
-      {veri.map((grup) => (
-        <div key={grup.ders}>
-          <SectionTitle>{grup.ders}</SectionTitle>
+      {isLoading ? <p className="text-sm text-muted-foreground">Yükleniyor…</p> : null}
+      {dersler.map((ders) => (
+        <div key={ders}>
+          <SectionTitle>{ders}</SectionTitle>
           <ul className="space-y-2">
-            {grup.konular.map((k) => (
-              <li key={k.ad} className="rounded-2xl border border-border bg-card p-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                  <p className="truncate text-sm font-medium text-foreground">{k.ad}</p>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
-                    %{k.oran}
-                  </span>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className={`h-full rounded-full ${renk(k.oran)}`} style={{ width: `${k.oran}%` }} />
-                </div>
-              </li>
-            ))}
+            {konular
+              .filter((k) => k.subject === ders)
+              .map((k) => (
+                <li key={k.id} className="rounded-2xl border border-border bg-card p-4">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+                    <p className="truncate text-sm font-medium text-foreground">{k.topic}</p>
+                    <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
+                      %{k.mastery}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className={`h-full rounded-full ${renk(k.mastery)}`}
+                      style={{ width: `${k.mastery}%` }}
+                    />
+                  </div>
+                </li>
+              ))}
           </ul>
         </div>
       ))}
