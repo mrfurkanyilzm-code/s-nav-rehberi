@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      coach_requests: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          status: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          message: string
+          status?: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          status?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       curriculum_topics: {
         Row: {
           blank_count: number
@@ -140,6 +167,51 @@ export type Database = {
           is_done?: boolean
           task_date?: string
           title?: string
+        }
+        Relationships: []
+      }
+      weekly_plan_items: {
+        Row: {
+          book: string | null
+          created_at: string
+          day_index: number
+          id: string
+          is_done: boolean
+          pdf_url: string | null
+          question_count: number
+          sort_order: number
+          subject: string
+          topic: string
+          video_url: string | null
+          week_start: string
+        }
+        Insert: {
+          book?: string | null
+          created_at?: string
+          day_index: number
+          id?: string
+          is_done?: boolean
+          pdf_url?: string | null
+          question_count?: number
+          sort_order?: number
+          subject: string
+          topic: string
+          video_url?: string | null
+          week_start: string
+        }
+        Update: {
+          book?: string | null
+          created_at?: string
+          day_index?: number
+          id?: string
+          is_done?: boolean
+          pdf_url?: string | null
+          question_count?: number
+          sort_order?: number
+          subject?: string
+          topic?: string
+          video_url?: string | null
+          week_start?: string
         }
         Relationships: []
       }
