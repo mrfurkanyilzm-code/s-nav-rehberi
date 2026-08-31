@@ -2,6 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Flame, Star, Plus, GraduationCap, Check } from "lucide-react";
 import { Screen, SectionTitle } from "@/components/BottomNav";
+import {
+  useAddMockEvent,
+  useGoal,
+  useMockEvents,
+  useTasks,
+  useToggleTask,
+  trTarih,
+} from "@/lib/data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,9 +30,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const EXAM_DATE = new Date("2027-06-19T10:15:00+03:00");
-
-function useCountdown() {
+function useCountdown(examDate?: string | null) {
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
@@ -32,55 +38,47 @@ function useCountdown() {
     return () => clearInterval(id);
   }, []);
   return useMemo(() => {
-    if (!now) return null;
-    const diff = Math.max(0, EXAM_DATE.getTime() - now.getTime());
+    if (!now || !examDate) return null;
+    const diff = Math.max(0, new Date(examDate).getTime() - now.getTime());
     return {
       gun: Math.floor(diff / 86400000),
       saat: Math.floor(diff / 3600000) % 24,
       dakika: Math.floor(diff / 60000) % 60,
       saniye: Math.floor(diff / 1000) % 60,
     };
-  }, [now]);
+  }, [now, examDate]);
 }
 
-type Deneme = { ad: string; kurum: string; tarih: string; durum: "planlandi" | "tamamlandi" };
-
-const baslangicDenemeler: Deneme[] = [
-  { ad: "3D TYT-11", kurum: "Türkiye Geneli", tarih: "6 Eyl Cmt", durum: "planlandi" },
-  { ad: "345 AYT-4", kurum: "Türkiye Geneli", tarih: "13 Eyl Cmt", durum: "planlandi" },
-  { ad: "Bilfen TYT-3", kurum: "Türkiye Geneli", tarih: "20 Eyl Cmt", durum: "planlandi" },
-  { ad: "3D AYT-9", kurum: "Türkiye Geneli", tarih: "30 Ağu Cmt", durum: "tamamlandi" },
-];
-
-type Gorev = { id: number; baslik: string; detay: string; bitti: boolean };
-
-const baslangicGorevler: Gorev[] = [
-  { id: 1, baslik: "Matematik — Problemler", detay: "40 soru", bitti: true },
-  { id: 2, baslik: "Türkçe — Paragraf", detay: "30 soru", bitti: true },
-  { id: 3, baslik: "Tarih — İnkılap konu tekrarı", detay: "1 konu + 20 soru", bitti: false },
-  { id: 4, baslik: "Coğrafya — Nüfus", detay: "25 soru", bitti: false },
-  { id: 5, baslik: "Deneme analizi (3D AYT-9)", detay: "Yanlış defteri", bitti: false },
-];
-
 function Home() {
-  const kalan = useCountdown();
-  const [gorevler, setGorevler] = useState(baslangicGorevler);
-  const [denemeler, setDenemeler] = useState(baslangicDenemeler);
+  const { data: hedef } = useGoal();
+  const { data: denemeler = [] } = useMockEvents();
+  const { data: gorevler = [] } = useTasks();
+  const toggleTask = useToggleTask();
+  const addEvent = useAddMockEvent();
+  const kalan = useCountdown(hedef?.exam_date);
+
   const [form, setForm] = useState({ ad: "", tarih: "" });
   const [acik, setAcik] = useState(false);
 
-  const tamam = gorevler.filter((g) => g.bitti).length;
-  const yuzde = Math.round((tamam / gorevler.length) * 100);
+  const tamam = gorevler.filter((g) => g.is_done).length;
+  const yuzde = gorevler.length ? Math.round((tamam / gorevler.length) * 100) : 0;
 
   return (
-    <Screen title="Merhaba Furkan 👋" subtitle="Bugün de bir adım daha yaklaşıyoruz.">
+    <Screen
+      title={`Merhaba ${hedef?.student_name ?? ""} 👋`}
+      subtitle="Bugün de bir adım daha yaklaşıyoruz."
+    >
       {/* Hedef + geri sayım */}
       <section className="rounded-3xl bg-primary p-5 text-primary-foreground shadow-[var(--shadow-soft)]">
         <div className="flex min-w-0 items-center gap-2 text-xs font-medium opacity-80">
           <GraduationCap className="h-4 w-4 shrink-0" />
-          <span className="truncate">Boğaziçi Üniversitesi — YBS</span>
+          <span className="truncate">
+            {hedef ? `${hedef.university} — ${hedef.department}` : "Hedef yükleniyor…"}
+          </span>
         </div>
-        <p className="mt-1 text-lg font-semibold">Hedef: 709. sıra</p>
+        <p className="mt-1 text-lg font-semibold">
+          {hedef ? `Hedef: ${hedef.target_rank}. sıra` : "—"}
+        </p>
         <div className="mt-4 grid grid-cols-4 gap-2">
           {[
             ["Gün", kalan?.gun],
@@ -104,14 +102,18 @@ function Home() {
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <Flame className="h-5 w-5 text-streak" />
-            <span className="text-2xl font-bold text-foreground tabular-nums">37</span>
+            <span className="text-2xl font-bold text-foreground tabular-nums">
+              {hedef?.streak_days ?? "—"}
+            </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">Günlük seri</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <Star className="h-5 w-5 text-star" fill="currentColor" />
-            <span className="text-2xl font-bold text-foreground tabular-nums">1.240</span>
+            <span className="text-2xl font-bold text-foreground tabular-nums">
+              {hedef ? hedef.stars.toLocaleString("tr-TR") : "—"}
+            </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">Yıldız</p>
         </div>
@@ -136,18 +138,16 @@ function Home() {
           className="mb-3 space-y-2 rounded-2xl border border-border bg-card p-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (!form.ad.trim()) return;
-            setDenemeler((d) => [
-              ...d,
+            if (!form.ad.trim() || !form.tarih) return;
+            addEvent.mutate(
+              { name: form.ad.trim(), event_date: form.tarih },
               {
-                ad: form.ad,
-                kurum: "Manuel",
-                tarih: form.tarih || "Tarihsiz",
-                durum: "planlandi",
+                onSuccess: () => {
+                  setForm({ ad: "", tarih: "" });
+                  setAcik(false);
+                },
               },
-            ]);
-            setForm({ ad: "", tarih: "" });
-            setAcik(false);
+            );
           }}
         >
           <input
@@ -157,13 +157,16 @@ function Home() {
             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ring"
           />
           <input
+            type="date"
             value={form.tarih}
             onChange={(e) => setForm({ ...form, tarih: e.target.value })}
-            placeholder="Tarih (örn. 27 Eyl Cmt)"
             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ring"
           />
-          <button className="w-full rounded-xl bg-primary py-2 text-sm font-semibold text-primary-foreground">
-            Takvime ekle
+          <button
+            disabled={addEvent.isPending}
+            className="w-full rounded-xl bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
+            {addEvent.isPending ? "Ekleniyor…" : "Takvime ekle"}
           </button>
         </form>
       ) : null}
@@ -171,23 +174,23 @@ function Home() {
       <ul className="space-y-2">
         {denemeler.map((d) => (
           <li
-            key={d.ad}
+            key={d.id}
             className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-border bg-card p-4"
           >
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">{d.ad}</p>
+              <p className="truncate text-sm font-semibold text-foreground">{d.name}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {d.kurum} · {d.tarih}
+                {d.provider} · {trTarih(d.event_date)}
               </p>
             </div>
             <span
               className={
-                d.durum === "tamamlandi"
+                d.status === "tamamlandi"
                   ? "shrink-0 rounded-full bg-success-soft px-2.5 py-1 text-[11px] font-semibold text-success"
                   : "shrink-0 rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground"
               }
             >
-              {d.durum === "tamamlandi" ? "Tamamlandı" : "Planlandı"}
+              {d.status === "tamamlandi" ? "Tamamlandı" : "Planlandı"}
             </span>
           </li>
         ))}
@@ -204,31 +207,27 @@ function Home() {
         {gorevler.map((g) => (
           <li key={g.id}>
             <button
-              onClick={() =>
-                setGorevler((list) =>
-                  list.map((x) => (x.id === g.id ? { ...x, bitti: !x.bitti } : x)),
-                )
-              }
+              onClick={() => toggleTask.mutate({ id: g.id, is_done: !g.is_done })}
               className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left"
             >
               <span
                 className={
                   "grid h-6 w-6 shrink-0 place-items-center rounded-lg border transition-colors " +
-                  (g.bitti ? "border-primary bg-primary" : "border-border bg-background")
+                  (g.is_done ? "border-primary bg-primary" : "border-border bg-background")
                 }
               >
-                {g.bitti ? <Check className="h-4 w-4 text-primary-foreground" /> : null}
+                {g.is_done ? <Check className="h-4 w-4 text-primary-foreground" /> : null}
               </span>
               <span className="min-w-0">
                 <span
                   className={
                     "block truncate text-sm font-medium " +
-                    (g.bitti ? "text-muted-foreground line-through" : "text-foreground")
+                    (g.is_done ? "text-muted-foreground line-through" : "text-foreground")
                   }
                 >
-                  {g.baslik}
+                  {g.title}
                 </span>
-                <span className="block truncate text-xs text-muted-foreground">{g.detay}</span>
+                <span className="block truncate text-xs text-muted-foreground">{g.detail}</span>
               </span>
             </button>
           </li>
