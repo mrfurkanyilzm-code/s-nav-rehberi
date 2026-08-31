@@ -1,27 +1,28 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BarChart3, Target, CalendarDays } from "lucide-react";
+import { Home, CalendarDays, ClipboardList, BookOpen, BarChart3 } from "lucide-react";
 
 const items = [
   { to: "/", label: "Ana Sayfa", icon: Home },
+  { to: "/takvim", label: "Takvim", icon: CalendarDays },
+  { to: "/program", label: "Program", icon: ClipboardList },
+  { to: "/konular", label: "Konular", icon: BookOpen },
   { to: "/analitik", label: "Analitik", icon: BarChart3 },
-  { to: "/konular", label: "Konular", icon: Target },
-  { to: "/program", label: "Program", icon: CalendarDays },
 ] as const;
 
 export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 backdrop-blur-md">
-      <ul className="mx-auto grid max-w-md grid-cols-4 px-1 pb-[env(safe-area-inset-bottom)]">
+      <ul className="mx-auto grid max-w-md grid-cols-5 px-1 pb-[env(safe-area-inset-bottom)]">
         {items.map(({ to, label, icon: Icon }) => (
           <li key={to} className="min-w-0">
             <Link
               to={to}
               activeOptions={{ exact: to === "/" }}
-              className="flex flex-col items-center gap-1 py-3 text-[11px] font-medium text-muted-foreground transition-colors"
+              className="flex flex-col items-center gap-1 py-3 text-[10px] font-medium text-muted-foreground transition-colors"
               activeProps={{ className: "text-primary" }}
             >
               <Icon className="h-5 w-5 shrink-0" strokeWidth={2} />
-              <span className="truncate">{label}</span>
+              <span className="w-full truncate text-center">{label}</span>
             </Link>
           </li>
         ))}
