@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      curriculum_topics: {
+        Row: {
+          blank_count: number
+          correct_count: number
+          created_at: string
+          id: string
+          mastery: number
+          subject: string
+          topic: string
+          wrong_count: number
+        }
+        Insert: {
+          blank_count?: number
+          correct_count?: number
+          created_at?: string
+          id?: string
+          mastery?: number
+          subject: string
+          topic: string
+          wrong_count?: number
+        }
+        Update: {
+          blank_count?: number
+          correct_count?: number
+          created_at?: string
+          id?: string
+          mastery?: number
+          subject?: string
+          topic?: string
+          wrong_count?: number
+        }
+        Relationships: []
+      }
+      mock_calendar_events: {
+        Row: {
+          created_at: string
+          event_date: string
+          id: string
+          name: string
+          net: number | null
+          provider: string
+          rank: number | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          event_date: string
+          id?: string
+          name: string
+          net?: number | null
+          provider?: string
+          rank?: number | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          id?: string
+          name?: string
+          net?: number | null
+          provider?: string
+          rank?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      student_goals: {
+        Row: {
+          created_at: string
+          department: string
+          exam_date: string
+          id: string
+          stars: number
+          streak_days: number
+          student_name: string
+          target_rank: number
+          university: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          exam_date: string
+          id?: string
+          stars?: number
+          streak_days?: number
+          student_name: string
+          target_rank: number
+          university: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          exam_date?: string
+          id?: string
+          stars?: number
+          streak_days?: number
+          student_name?: string
+          target_rank?: number
+          university?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          is_done: boolean
+          task_date: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          is_done?: boolean
+          task_date?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          is_done?: boolean
+          task_date?: string
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
