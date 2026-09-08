@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalitikRouteImport } from './routes/analitik'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as KocPaneliRouteImport } from './routes/koc-paneli'
 import { Route as KonularRouteImport } from './routes/konular'
 import { Route as ProgramRouteImport } from './routes/program'
 import { Route as TakvimRouteImport } from './routes/takvim'
@@ -23,6 +25,16 @@ const IndexRoute = IndexRouteImport.update({
 const AnalitikRoute = AnalitikRouteImport.update({
   id: '/analitik',
   path: '/analitik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KocPaneliRoute = KocPaneliRouteImport.update({
+  id: '/koc-paneli',
+  path: '/koc-paneli',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KonularRoute = KonularRouteImport.update({
@@ -44,6 +56,8 @@ const TakvimRoute = TakvimRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analitik': typeof AnalitikRoute
+  '/auth': typeof AuthRoute
+  '/koc-paneli': typeof KocPaneliRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
   '/takvim': typeof TakvimRoute
@@ -51,6 +65,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analitik': typeof AnalitikRoute
+  '/auth': typeof AuthRoute
+  '/koc-paneli': typeof KocPaneliRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
   '/takvim': typeof TakvimRoute
@@ -59,21 +75,47 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analitik': typeof AnalitikRoute
+  '/auth': typeof AuthRoute
+  '/koc-paneli': typeof KocPaneliRoute
   '/konular': typeof KonularRoute
   '/program': typeof ProgramRoute
   '/takvim': typeof TakvimRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analitik' | '/konular' | '/program' | '/takvim'
+  fullPaths:
+    | '/'
+    | '/analitik'
+    | '/auth'
+    | '/koc-paneli'
+    | '/konular'
+    | '/program'
+    | '/takvim'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analitik' | '/konular' | '/program' | '/takvim'
-  id: '__root__' | '/' | '/analitik' | '/konular' | '/program' | '/takvim'
+  to:
+    | '/'
+    | '/analitik'
+    | '/auth'
+    | '/koc-paneli'
+    | '/konular'
+    | '/program'
+    | '/takvim'
+  id:
+    | '__root__'
+    | '/'
+    | '/analitik'
+    | '/auth'
+    | '/koc-paneli'
+    | '/konular'
+    | '/program'
+    | '/takvim'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalitikRoute: typeof AnalitikRoute
+  AuthRoute: typeof AuthRoute
+  KocPaneliRoute: typeof KocPaneliRoute
   KonularRoute: typeof KonularRoute
   ProgramRoute: typeof ProgramRoute
   TakvimRoute: typeof TakvimRoute
@@ -93,6 +135,20 @@ declare module '@tanstack/react-router' {
       path: '/analitik'
       fullPath: '/analitik'
       preLoaderRoute: typeof AnalitikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/koc-paneli': {
+      id: '/koc-paneli'
+      path: '/koc-paneli'
+      fullPath: '/koc-paneli'
+      preLoaderRoute: typeof KocPaneliRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/konular': {
@@ -122,6 +178,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalitikRoute: AnalitikRoute,
+  AuthRoute: AuthRoute,
+  KocPaneliRoute: KocPaneliRoute,
   KonularRoute: KonularRoute,
   ProgramRoute: ProgramRoute,
   TakvimRoute: TakvimRoute,

@@ -74,6 +74,39 @@ export type Database = {
         }
         Relationships: []
       }
+      student_topic_mastery: {
+        Row: {
+          created_at: string
+          exam_track: string
+          id: string
+          review_after_days: number
+          status: string
+          subject: string
+          topic_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exam_track: string
+          id?: string
+          review_after_days?: number
+          status: string
+          subject: string
+          topic_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exam_track?: string
+          id?: string
+          review_after_days?: number
+          status?: string
+          subject?: string
+          topic_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mock_calendar_events: {
         Row: {
           created_at: string
@@ -112,6 +145,7 @@ export type Database = {
           created_at: string
           department: string
           exam_date: string
+          exam_field: string
           id: string
           stars: number
           streak_days: number
@@ -123,6 +157,7 @@ export type Database = {
           created_at?: string
           department: string
           exam_date: string
+          exam_field?: string
           id?: string
           stars?: number
           streak_days?: number
@@ -134,6 +169,7 @@ export type Database = {
           created_at?: string
           department?: string
           exam_date?: string
+          exam_field?: string
           id?: string
           stars?: number
           streak_days?: number

@@ -103,6 +103,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
+    scripts: [
+      {
+        src: "https://accounts.google.com/gsi/client",
+        async: true,
+        defer: true,
+      },
+    ],
   }),
 
   shellComponent: RootShell,
